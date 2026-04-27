@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "esModuleInterop": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "declaration": false,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "outDir": "./.medusa/server",
+    "rootDir": "./",
+    "jsx": "react-jsx",
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "checkJs": false,
+    "strictNullChecks": true
+  },
+  "ts-node": {
+    "swc": true
+  },
+  "include": [
+    "**/*",
+    ".medusa/types/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".medusa/server",
+    ".medusa/admin",
+    ".cache",
+    "clean-specs.ts",
+    "check-prices.ts",
+    "check-product.ts",
+    "create-hugo-boss.ts",
+    "create-sweden-region.ts",
+    "create-test-product.ts",
+    "deep-clean-admin.ts",
+    "delete-all-products.ts",
+    "final-auth-fix.ts",
+    "fix-admin-auth.ts",
+    "fix-prices.ts",
+    "fix-region-currency.ts",
+    "fix-region-pricing.ts",
+    "flatten-metadata.ts",
+    "import-csv-direct.ts",
+    "import-wc-csv.ts",
+    "last-resort-fix.ts",
+    "list-regions.ts",
+    "list-services.ts",
+    "recreate-admin.ts",
+    "setup-collections.ts",
+    "setup-shipping.ts",
+    "setup-tax.ts",
+    "update-admin-credentials.ts",
+    "update-inventory.ts",
+    "update-store.ts",
+    "update-tax-inclusive.ts",
+    "verify-currencies.ts"
+  ]
+}

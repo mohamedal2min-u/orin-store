@@ -1,0 +1,265 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* ═══════════════════════════════════════════════════
+   KRONVÄRD — Stockholm Atelier Design Tokens
+   ═══════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* ── Colors ── */
+    --kv-bg:            #FAF8F5;
+    --kv-surface:       #F2EDE8;
+    --kv-text-primary:  #1C1714;
+    --kv-text-secondary:#6B635B;
+    --kv-border:        #D9D3CC;
+    --kv-accent:        #8B7355;
+    --kv-accent-hover:  #7A644A;
+    --kv-white:         #FFFFFF;
+
+    /* ── Typography ── */
+    --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono:  'Roboto Mono', ui-monospace, 'SF Mono', monospace;
+  }
+
+  /* ── Global resets ── */
+  html {
+    background-color: var(--kv-bg);
+    color: var(--kv-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--kv-bg);
+    color: var(--kv-text-primary);
+    line-height: 1.7;
+  }
+
+  /* ── Links ── */
+  a {
+    color: var(--kv-text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--kv-accent);
+  }
+
+  /* ── Focus visible ── */
+  :focus-visible {
+    outline: 2px solid var(--kv-accent);
+    outline-offset: 3px;
+  }
+
+  /* ── Selection ── */
+  ::selection {
+    background-color: var(--kv-accent);
+    color: var(--kv-bg);
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--kv-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--kv-border);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--kv-text-secondary);
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Hide scrollbar for category circles */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  input:focus ~ label,
+  input:not(:placeholder-shown) ~ label {
+    @apply -translate-y-2 text-xsmall-regular;
+  }
+
+  input:focus ~ label {
+    @apply left-0;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    border: 1px solid var(--kv-border);
+    -webkit-text-fill-color: var(--kv-text-primary);
+    -webkit-box-shadow: 0 0 0px 1000px var(--kv-bg) inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+
+  /* ── Utility: Mono font for prices/specs ── */
+  .font-mono-price {
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+}
+
+@layer components {
+  .content-container {
+    @apply max-w-[1440px] w-full mx-auto px-6;
+  }
+
+  /* ── Kronvärd Button: Primary ── */
+  .kv-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 16px 40px;
+    background-color: var(--kv-text-primary);
+    color: var(--kv-bg);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .kv-btn-primary:hover {
+    opacity: 0.85;
+    color: var(--kv-bg);
+  }
+  .kv-btn-primary:active {
+    transform: scale(0.98);
+  }
+  .kv-btn-primary:focus-visible {
+    outline: 2px solid var(--kv-accent);
+    outline-offset: 3px;
+  }
+
+  /* ── Kronvärd Button: Secondary ── */
+  .kv-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 16px 40px;
+    background-color: transparent;
+    color: var(--kv-text-primary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid var(--kv-border);
+    border-radius: 0;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .kv-btn-secondary:hover {
+    border-color: var(--kv-text-primary);
+    color: var(--kv-text-primary);
+  }
+  .kv-btn-secondary:focus-visible {
+    outline: 2px solid var(--kv-accent);
+    outline-offset: 3px;
+  }
+
+  /* ── Typography utility classes (kept for Medusa compatibility) ── */
+  .text-xsmall-regular {
+    @apply text-[10px] leading-4 font-normal;
+  }
+
+  .text-small-regular {
+    @apply text-xs leading-5 font-normal;
+  }
+
+  .text-small-semi {
+    @apply text-xs leading-5 font-semibold;
+  }
+
+  .text-base-regular {
+    @apply text-sm leading-6 font-normal;
+  }
+
+  .text-base-semi {
+    @apply text-sm leading-6 font-semibold;
+  }
+
+  .text-large-regular {
+    @apply text-base leading-6 font-normal;
+  }
+
+  .text-large-semi {
+    @apply text-base leading-6 font-semibold;
+  }
+
+  .text-xl-regular {
+    @apply text-2xl leading-[36px] font-normal;
+  }
+
+  .text-xl-semi {
+    @apply text-2xl leading-[36px] font-semibold;
+  }
+
+  .text-2xl-regular {
+    @apply text-[30px] leading-[48px] font-normal;
+  }
+
+  .text-2xl-semi {
+    @apply text-[30px] leading-[48px] font-semibold;
+  }
+
+  .text-3xl-regular {
+    @apply text-[32px] leading-[44px] font-normal;
+  }
+
+  .text-3xl-semi {
+    @apply text-[32px] leading-[44px] font-semibold;
+  }
+
+  .contrast-btn {
+    @apply px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+    border-radius: 0;
+  }
+}

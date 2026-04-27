@@ -1,0 +1,79 @@
+{
+  "project": "KRONVÄRD",
+  "installed_skills": [
+    {
+      "id": "medusa-admin-ops",
+      "role": "Medusa backend: Region, SEK, VAT, Shipping, Stripe",
+      "source": "custom",
+      "status": "active"
+    },
+    {
+      "id": "storefront-builder",
+      "role": "Next.js storefront: pages, components, Swedish i18n",
+      "source": "custom",
+      "status": "active"
+    },
+    {
+      "id": "product-content-se",
+      "role": "Swedish product content: titles, descriptions, specs, templates",
+      "source": "custom",
+      "status": "active"
+    },
+    {
+      "id": "design-system-luxury",
+      "role": "Design system: tokens, components, Minimal Luxury patterns",
+      "source": "custom",
+      "status": "active"
+    },
+    {
+      "id": "seo-commerce-se",
+      "role": "SEO: titles, meta, schema, internal linking, Swedish keywords",
+      "source": "custom",
+      "status": "active"
+    },
+    {
+      "id": "stitch-design",
+      "role": "UI/UX high-fidelity generation",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "stitch-loop",
+      "role": "Automated multi-page generation",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "design-md",
+      "role": "Semantic Design System Synthesis",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "enhance-prompt",
+      "role": "Prompt optimization for UI generation",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "react-components",
+      "role": "Stitch to React/Next.js conversion",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "shadcn-ui",
+      "role": "Component library best practices",
+      "source": "google-labs",
+      "status": "active"
+    },
+    {
+      "id": "remotion",
+      "role": "Video walkthrough generation",
+      "source": "google-labs",
+      "status": "active"
+    }
+  ],
+  "engine": "Antigravity AI (Custom + Google Labs Skills)",
+  "version": "3.0.0"
+}
