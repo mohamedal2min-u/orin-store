@@ -58,6 +58,9 @@
     "update-inventory.ts",
     "update-store.ts",
     "update-tax-inclusive.ts",
-    "verify-currencies.ts"
+    "verify-currencies.ts",
+    "apply-discount-10.ts",
+    "check-discount-status.ts",
+    "restore-discounts.ts"
   ]
 }
