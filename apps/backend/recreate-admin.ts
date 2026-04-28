@@ -7,7 +7,7 @@ export default async function ({ container }: { container: MedusaContainer }) {
   const userModule = container.resolve(Modules.USER);
   const authModule = container.resolve(Modules.AUTH);
 
-  const email = "mohamed@alamin.se";
+  const email = "mohamed@orin.se";
   const password = "a550055A!";
 
   try {

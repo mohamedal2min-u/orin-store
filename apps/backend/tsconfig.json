@@ -23,14 +23,41 @@
     "swc": true
   },
   "include": [
-    "src/**/*",
-    "medusa-config.ts",
+    "**/*",
     ".medusa/types/*"
   ],
   "exclude": [
     "node_modules",
     ".medusa/server",
     ".medusa/admin",
-    ".cache"
+    ".cache",
+    "clean-specs.ts",
+    "check-prices.ts",
+    "check-product.ts",
+    "create-hugo-boss.ts",
+    "create-sweden-region.ts",
+    "create-test-product.ts",
+    "deep-clean-admin.ts",
+    "delete-all-products.ts",
+    "final-auth-fix.ts",
+    "fix-admin-auth.ts",
+    "fix-prices.ts",
+    "fix-region-currency.ts",
+    "fix-region-pricing.ts",
+    "flatten-metadata.ts",
+    "import-csv-direct.ts",
+    "import-wc-csv.ts",
+    "last-resort-fix.ts",
+    "list-regions.ts",
+    "list-services.ts",
+    "recreate-admin.ts",
+    "setup-collections.ts",
+    "setup-shipping.ts",
+    "setup-tax.ts",
+    "update-admin-credentials.ts",
+    "update-inventory.ts",
+    "update-store.ts",
+    "update-tax-inclusive.ts",
+    "verify-currencies.ts"
   ]
 }

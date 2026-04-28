@@ -1,0 +1,1 @@
+{"delaySeconds":300,"reason":"Checking ORIN store deploy progress after cleanup and fixes","prompt":"تحقق من تقدم deploy الـ ORIN store على السيرفر 82.29.181.61. تحقق من ~/deploy-backend.log و ~/deploy-frontend.log. إذا انتهى كلاهما، تحقق من PM2 وأخبر المستخدم. إذا لا يزالان يعملان، اعرض آخر 10 أسطر واجدول wakeup آخر."}
