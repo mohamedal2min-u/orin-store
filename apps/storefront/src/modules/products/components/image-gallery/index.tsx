@@ -3,7 +3,7 @@
 import { HttpTypes } from "@medusajs/types"
 import Image from "next/image"
 import { useCallback, useRef, useState } from "react"
-import { clx } from "@medusajs/ui"
+import clx from "clsx"
 
 type ImageGalleryProps = {
   images: HttpTypes.StoreProductImage[]
