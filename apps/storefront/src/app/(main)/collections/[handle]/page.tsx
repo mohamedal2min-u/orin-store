@@ -8,7 +8,7 @@ import CollectionTemplate from "@modules/collections/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 type Props = {
-  params: Promise<{ handle: string; countryCode: string }>
+  params: Promise<{ handle: string }>
   searchParams: Promise<{
     page?: string
     sortBy?: SortOptions
@@ -26,26 +26,9 @@ export async function generateStaticParams() {
     return []
   }
 
-  const countryCodes = await listRegions().then(
-    (regions: StoreRegion[]) =>
-      regions
-        ?.map((r) => r.countries?.map((c) => c.iso_2))
-        .flat()
-        .filter(Boolean) as string[]
-  )
-
-  const collectionHandles = collections.map(
-    (collection: StoreCollection) => collection.handle
-  )
-
-  const staticParams = countryCodes
-    ?.map((countryCode: string) =>
-      collectionHandles.map((handle: string | undefined) => ({
-        countryCode,
-        handle,
-      }))
-    )
-    .flat()
+  const staticParams = collections.map((collection: StoreCollection) => ({
+    handle: collection.handle,
+  }))
 
   return staticParams
 }
@@ -59,7 +42,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   const metadata = {
-    title: `${collection.title} | Medusa Store`,
+    title: `${collection.title} | ORIN`,
     description: `${collection.title} collection`,
   } as Metadata
 
@@ -70,10 +53,9 @@ export default async function CollectionPage(props: Props) {
   const searchParams = await props.searchParams
   const params = await props.params
   const { sortBy, page } = searchParams
+  const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "se"
 
-  const collection = await getCollectionByHandle(params.handle).then(
-    (collection) => collection
-  )
+  const collection = await getCollectionByHandle(params.handle)
 
   if (!collection) {
     notFound()
@@ -84,7 +66,7 @@ export default async function CollectionPage(props: Props) {
       collection={collection}
       page={page}
       sortBy={sortBy}
-      countryCode={params.countryCode}
+      countryCode={DEFAULT_REGION}
     />
   )
 }

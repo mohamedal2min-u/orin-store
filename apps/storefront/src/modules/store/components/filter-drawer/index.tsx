@@ -1,7 +1,8 @@
 "use client"
 
 import { Dialog, Transition, TransitionChild, DialogPanel, DialogTitle } from "@headlessui/react"
-import { Fragment, useState } from "react"
+import { Fragment } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { XMark } from "@medusajs/icons"
 import RefinementList from "../refinement-list"
 import { SortOptions } from "../refinement-list/sort-products"
@@ -13,7 +14,16 @@ type FilterDrawerProps = {
 }
 
 const FilterDrawer = ({ isOpen, close, sortBy }: FilterDrawerProps) => {
-  const [activeFilters, setActiveFilters] = useState(0)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const clearAllFilters = () => {
+    const params = new URLSearchParams()
+    if (searchParams.get("sortBy")) params.set("sortBy", searchParams.get("sortBy")!)
+    router.push(`${pathname}?${params.toString()}`)
+    close()
+  }
 
   return (
     <Transition show={isOpen} as={Fragment}>
@@ -111,7 +121,7 @@ const FilterDrawer = ({ isOpen, close, sortBy }: FilterDrawerProps) => {
                         <button
                           type="button"
                           className="flex-1 py-3 text-[12px] font-medium text-kv-secondary uppercase tracking-kv-wider border border-kv-border/80 rounded-sm hover:text-kv-primary hover:border-kv-primary/30 transition-all duration-200"
-                          onClick={close}
+                          onClick={clearAllFilters}
                         >
                           Rensa alla
                         </button>

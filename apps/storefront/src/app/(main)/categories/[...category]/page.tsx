@@ -8,7 +8,7 @@ import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
 type Props = {
-  params: Promise<{ category: string[]; countryCode: string }>
+  params: Promise<{ category: string[] }>
   searchParams: Promise<{
     sortBy?: SortOptions
     page?: string
@@ -22,22 +22,11 @@ export async function generateStaticParams() {
     return []
   }
 
-  const countryCodes = await listRegions().then((regions: StoreRegion[]) =>
-    regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
+  const staticParams = product_categories.map(
+    (category: HttpTypes.StoreProductCategory) => ({
+      category: [category.handle],
+    })
   )
-
-  const categoryHandles = product_categories.map(
-    (category: HttpTypes.StoreProductCategory) => category.handle
-  )
-
-  const staticParams = countryCodes
-    ?.map((countryCode: string | undefined) =>
-      categoryHandles.map((handle: string) => ({
-        countryCode,
-        category: [handle],
-      }))
-    )
-    .flat()
 
   return staticParams
 }
@@ -47,12 +36,12 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   try {
     const productCategory = await getCategoryByHandle(params.category)
 
-    const title = productCategory.name + " | Medusa Store"
+    const title = productCategory.name + " | ORIN"
 
     const description = productCategory.description ?? `${title} category.`
 
     return {
-      title: `${title} | Medusa Store`,
+      title,
       description,
       alternates: {
         canonical: `${params.category.join("/")}`,
@@ -67,6 +56,7 @@ export default async function CategoryPage(props: Props) {
   const searchParams = await props.searchParams
   const params = await props.params
   const { sortBy, page } = searchParams
+  const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "se"
 
   const productCategory = await getCategoryByHandle(params.category)
 
@@ -79,7 +69,7 @@ export default async function CategoryPage(props: Props) {
       category={productCategory}
       sortBy={sortBy}
       page={page}
-      countryCode={params.countryCode}
+      countryCode={DEFAULT_REGION}
     />
   )
 }

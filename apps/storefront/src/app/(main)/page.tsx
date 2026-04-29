@@ -11,14 +11,8 @@ export const metadata: Metadata = {
     "Ett noggrant urval av armbandsur från välkända varumärken — med tydliga priser, trygg betalning och leverans inom Sverige.",
 }
 
-export default async function Home(props: {
-  params: Promise<{ countryCode: string }>
-}) {
-  const params = await props.params
-
-  const { countryCode } = params
-
-  const region = await getRegion(countryCode)
+export default async function Home() {
+  const region = await getRegion()
 
   if (!region) {
     return null

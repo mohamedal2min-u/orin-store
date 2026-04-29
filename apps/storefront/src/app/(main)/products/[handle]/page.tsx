@@ -1,47 +1,42 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 import { listProducts } from "@lib/data/products"
 import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 import { HttpTypes } from "@medusajs/types"
 import { getBaseURL } from "@lib/util/env"
 
+// Memoize per-request to avoid duplicate API calls between generateMetadata and page render
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "se"
+
+// Memoize per-request to avoid duplicate API calls between generateMetadata and page render
+const getProduct = cache(async (handle: string) => {
+  const { response } = await listProducts({
+    countryCode: DEFAULT_REGION,
+    queryParams: { handle },
+  })
+  return response.products[0] ?? null
+})
+
+const getCachedRegion = cache(async () => getRegion(DEFAULT_REGION))
+
 type Props = {
-  params: Promise<{ countryCode: string; handle: string }>
+  params: Promise<{ handle: string }>
   searchParams: Promise<{ v_id?: string }>
 }
 
 export async function generateStaticParams() {
   try {
-    const countryCodes = await listRegions().then((regions) =>
-      regions?.map((r) => r.countries?.map((c) => c.iso_2)).flat()
-    )
-
-    if (!countryCodes) {
-      return []
-    }
-
-    const promises = countryCodes.map(async (country) => {
-      const { response } = await listProducts({
-        countryCode: country,
-        queryParams: { limit: 100, fields: "handle" },
-      })
-
-      return {
-        country,
-        products: response.products,
-      }
+    const { response } = await listProducts({
+      countryCode: DEFAULT_REGION,
+      queryParams: { limit: 100, fields: "handle" },
     })
 
-    const countryProducts = await Promise.all(promises)
-
-    return countryProducts
-      .flatMap((countryData) =>
-        countryData.products.map((product) => ({
-          countryCode: countryData.country,
-          handle: product.handle,
-        }))
-      )
+    return response.products
+      .map((product) => ({
+        handle: product.handle,
+      }))
       .filter((param) => param.handle)
   } catch (error) {
     console.error(
@@ -73,16 +68,13 @@ function getImagesForVariant(
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const { handle } = params
-  const region = await getRegion(params.countryCode)
+  const region = await getCachedRegion()
 
   if (!region) {
     notFound()
   }
 
-  const product = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle },
-  }).then(({ response }) => response.products[0])
+  const product = await getProduct(handle)
 
   if (!product) {
     notFound()
@@ -109,11 +101,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 function buildProductJsonLd(
-  product: HttpTypes.StoreProduct,
-  countryCode: string
+  product: HttpTypes.StoreProduct
 ): Record<string, unknown> {
   const baseUrl = getBaseURL()
-  const url = `${baseUrl}/${countryCode}/products/${product.handle}`
+  const url = `${baseUrl}/products/${product.handle}`
 
   const firstVariant = product.variants?.[0]
   const price = (firstVariant as any)?.calculated_price?.calculated_amount
@@ -146,7 +137,7 @@ function buildProductJsonLd(
 
 export default async function ProductPage(props: Props) {
   const params = await props.params
-  const region = await getRegion(params.countryCode)
+  const region = await getCachedRegion()
   const searchParams = await props.searchParams
 
   const selectedVariantId = searchParams.v_id
@@ -155,18 +146,15 @@ export default async function ProductPage(props: Props) {
     notFound()
   }
 
-  const pricedProduct = await listProducts({
-    countryCode: params.countryCode,
-    queryParams: { handle: params.handle },
-  }).then(({ response }) => response.products[0])
-
-  const images = getImagesForVariant(pricedProduct, selectedVariantId)
+  const pricedProduct = await getProduct(params.handle)
 
   if (!pricedProduct) {
     notFound()
   }
 
-  const jsonLd = buildProductJsonLd(pricedProduct, params.countryCode)
+  const images = getImagesForVariant(pricedProduct, selectedVariantId)
+
+  const jsonLd = buildProductJsonLd(pricedProduct)
 
   return (
     <>
@@ -177,7 +165,7 @@ export default async function ProductPage(props: Props) {
       <ProductTemplate
         product={pricedProduct}
         region={region}
-        countryCode={params.countryCode}
+        countryCode={DEFAULT_REGION}
         images={images ?? []}
       />
     </>

@@ -36,7 +36,8 @@ export default function ProductActions({
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
   const [isAdding, setIsAdding] = useState(false)
-  const countryCode = useParams().countryCode as string
+  const params = useParams()
+  const countryCode = (params.countryCode as string | undefined) || process.env.NEXT_PUBLIC_DEFAULT_REGION || "se"
 
   // If there is only 1 variant, preselect the options
   useEffect(() => {

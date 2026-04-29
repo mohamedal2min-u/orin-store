@@ -52,11 +52,12 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     .catch(() => null)
 }
 
-export async function getOrSetCart(countryCode: string) {
-  const region = await getRegion(countryCode)
+export async function getOrSetCart(countryCode?: string) {
+  const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "se"
+  const region = await getRegion(countryCode || DEFAULT_REGION)
 
   if (!region) {
-    throw new Error(`Region not found for country code: ${countryCode}`)
+    throw new Error(`Region not found for country code: ${countryCode || DEFAULT_REGION}`)
   }
 
   let cart = await retrieveCart(undefined, "id,region_id")
@@ -121,7 +122,7 @@ export async function addToCart({
 }: {
   variantId: string
   quantity: number
-  countryCode: string
+  countryCode?: string
 }) {
   if (!variantId) {
     throw new Error("Missing variant ID when adding to cart")
@@ -387,10 +388,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     return e.message
   }
 
-  const countryCode = (formData.get("shipping_address.country_code") as string).toLowerCase()
-  redirect(
-    `/${countryCode}/checkout?step=delivery`
-  )
+  redirect(`/checkout?step=delivery`)
 }
 
 /**
@@ -419,14 +417,11 @@ export async function placeOrder(cartId?: string) {
     .catch(medusaError)
 
   if (cartRes?.type === "order") {
-    const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
-
     const orderCacheTag = await getCacheTag("orders")
     revalidateTag(orderCacheTag)
 
     removeCartId()
-    redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
+    redirect(`/order/${cartRes?.order.id}/confirmed`)
   }
 
   return cartRes.cart
@@ -457,7 +452,8 @@ export async function updateRegion(countryCode: string, currentPath: string) {
   const productsCacheTag = await getCacheTag("products")
   revalidateTag(productsCacheTag)
 
-  redirect(`/${countryCode}${currentPath}`)
+  // Redirect to the same path, now with new region state
+  redirect(`${currentPath}`)
 }
 
 export async function listCartOptions() {
