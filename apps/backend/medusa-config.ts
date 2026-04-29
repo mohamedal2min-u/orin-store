@@ -2,12 +2,18 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
-const REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379"
+
+const isProduction = process.env.NODE_ENV === 'production'
+const redisUrl = process.env.REDIS_URL
+
+if (isProduction && !redisUrl) {
+  throw new Error("STRICT PRODUCTION RULE: REDIS_URL is required in production environment.")
+}
 
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    redisUrl: REDIS_URL,
+    redisUrl: redisUrl || undefined,
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
