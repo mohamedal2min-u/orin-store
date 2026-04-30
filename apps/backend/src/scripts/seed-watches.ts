@@ -13,16 +13,26 @@ export default async function seedWatches({ container }: { container: MedusaCont
 
   logger.info("🚀 Starting watch seeding script...");
 
-  // 1. Ensure Sweden Region exists
-  const { data: regions } = await query.graph({
+  // 1. Ensure Sweden Region exists or "se" country is assigned
+  const { data: allRegions } = await query.graph({
     entity: "region",
-    fields: ["id", "name", "currency_code"],
-    filters: { name: "Sweden" }
+    fields: ["id", "name", "currency_code", "countries.iso_2"],
   });
 
-  let regionId = regions[0]?.id;
+  // First, find if any region already has country 'se'
+  let region = (allRegions as any[]).find(r => 
+    r.countries?.some((c: any) => c.iso_2 === "se")
+  );
+
+  // If not found by country, try finding by name "Sweden"
+  if (!region) {
+    region = (allRegions as any[]).find(r => r.name === "Sweden");
+  }
+
+  let regionId = region?.id;
+
   if (!regionId) {
-    logger.info("Creating Sweden region...");
+    logger.info("No region found for country 'se'. Creating Sweden region...");
     const { result: newRegions } = await createRegionsWorkflow(container).run({
       input: {
         regions: [{
@@ -34,8 +44,9 @@ export default async function seedWatches({ container }: { container: MedusaCont
       }
     });
     regionId = newRegions[0].id;
+    logger.info(`Created new Sweden region: ${regionId}`);
   } else {
-    logger.info(`Found existing Sweden region: ${regionId}`);
+    logger.info(`Using existing region for 'se' (ID: ${regionId}, Name: ${region?.name})`);
   }
 
   // 2. Ensure Categories exist
@@ -87,12 +98,11 @@ export default async function seedWatches({ container }: { container: MedusaCont
   logger.info(`Using sales channel: ${salesChannelId}`);
 
   // 4. Sample Watch Products
-  // Using unique SKUs for seeding to avoid conflicts with existing orphaned inventory items
   const products = [
     {
       title: "Seiko 5 Sports Midi Svart/Stål 38 mm",
       handle: "seiko-5-sports-midi-svartstal-38-mm",
-      description: "Seiko 5 sports 38mm är en automatisk herrklockا i Seikos 5 Sports-serie med Ref.nr SRPK29K1. Denna Midi-version kombinerar kaliber 4R36 och dag-datumvisning med ett mer kompakt format.",
+      description: "Seiko 5 sports 38mm är en automatisk herrklockا i Seikos 5 Sports-serie med Ref.nr SRPK29K1. Denna Midi-version kombinerار kaliber 4R36 och dag-datumvisning med ett mer kompakt format.",
       subtitle: "Automatisk herrklocka med dag-datum",
       status: ProductStatus.PUBLISHED,
       thumbnail: "https://www.urme.se/wp-content/uploads/2025/12/seiko-5-sports-black-dial-automatic-watch-front-face-stainless-steel-srpk29k1.webp",
