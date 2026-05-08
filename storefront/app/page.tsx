@@ -1,10 +1,36 @@
 import { t } from "@/lib/translations";
+import { medusaFetch } from "@/lib/medusa";
+import { MedusaProduct, ProductListResponse } from "@/lib/types";
 import Link from "next/link";
+import Image from "next/image";
 
-export default function Home() {
+function formatPrice(product: MedusaProduct): string {
+  const price = product.variants[0]?.calculated_price
+  if (!price) return ""
+  return new Intl.NumberFormat("sv-SE", {
+    style: "currency",
+    currency: price.currency_code.toUpperCase(),
+    maximumFractionDigits: 0,
+  }).format(price.calculated_amount / 100)
+}
+
+async function getFeaturedProducts(): Promise<MedusaProduct[]> {
+  try {
+    const data = await medusaFetch<ProductListResponse>(
+      "/store/products?limit=4&fields=id,title,handle,thumbnail,+variants.calculated_price"
+    )
+    return data.products
+  } catch {
+    return []
+  }
+}
+
+export default async function Home() {
+  const products = await getFeaturedProducts()
+
   return (
     <div className="home-page">
-      {/* 3. Hero Banner */}
+      {/* Hero Banner */}
       <section className="hero-banner">
         <div className="container">
           <div className="hero-content">
@@ -15,7 +41,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Featured Brands (Placeholder) */}
+      {/* Featured Brands */}
       <section className="featured-brands">
         <div className="container">
           <h2 className="sr-only">{t.brands}</h2>
@@ -28,7 +54,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. Category Cards */}
+      {/* Category Cards */}
       <section className="category-cards">
         <div className="container">
           <div className="category-grid">
@@ -48,27 +74,57 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Product Highlights (Placeholder) */}
+      {/* Product Highlights */}
       <section className="product-highlights">
         <div className="container">
           <h2>{t.bestSellers}</h2>
           <div className="product-grid">
-            {/* Product Card Placeholders */}
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="product-card-placeholder">
-                <div className="image-placeholder">Bild</div>
-                <div className="product-info">
-                  <span className="brand">Märke</span>
-                  <h3 className="title">Klockmodell {item}</h3>
-                  <span className="price">1 499 kr</span>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/produkter/${product.handle}`}
+                  className="product-card"
+                >
+                  <div className="image-placeholder">
+                    {product.thumbnail ? (
+                      <Image
+                        src={product.thumbnail}
+                        alt={product.title}
+                        width={300}
+                        height={300}
+                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                      />
+                    ) : (
+                      <span>Bild</span>
+                    )}
+                  </div>
+                  <div className="product-info">
+                    <h3 className="title">{product.title}</h3>
+                    {formatPrice(product) && (
+                      <span className="price">{formatPrice(product)}</span>
+                    )}
+                  </div>
+                </Link>
+              ))
+            ) : (
+              /* Placeholders shown when catalog is empty */
+              [1, 2, 3, 4].map((item) => (
+                <div key={item} className="product-card-placeholder">
+                  <div className="image-placeholder">Bild</div>
+                  <div className="product-info">
+                    <span className="brand">Märke</span>
+                    <h3 className="title">Klockmodell {item}</h3>
+                    <span className="price">1 499 kr</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
 
-      {/* 8. Trust Section */}
+      {/* Trust Section */}
       <section className="trust-section">
         <div className="container">
           <div className="trust-grid">

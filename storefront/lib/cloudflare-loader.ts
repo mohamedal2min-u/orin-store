@@ -9,6 +9,11 @@ export default function cloudflareLoader({
   width,
   quality,
 }: LoaderArgs): string {
+  // Pass through absolute URLs that don't belong to our CDN (e.g. local file provider)
+  if (src.startsWith("http://") || src.startsWith("//")) {
+    return src;
+  }
+
   if (process.env.NEXT_PUBLIC_USE_CF_RESIZING === "true") {
     const params = [
       `width=${width}`,
