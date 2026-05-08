@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Noto_Sans_Arabic } from "next/font/google";
 import Link from "next/link";
 import { t } from "@/lib/translations";
 import "./globals.css";
@@ -8,6 +8,13 @@ const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-manrope",
+});
+
+const notoArabic = Noto_Sans_Arabic({
+  subsets: ["arabic"],
+  display: "swap",
+  variable: "--font-noto-arabic",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -22,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={manrope.variable}>
+    <html lang="sv" className={`${manrope.variable} ${notoArabic.variable}`}>
       <body className={manrope.className}>
         <div className="min-h-screen flex flex-col">
           {/* Top Bar */}

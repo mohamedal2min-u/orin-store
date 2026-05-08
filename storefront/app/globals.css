@@ -13,6 +13,8 @@
   --color-accent-hover: #b8953e;
   --color-sale: #c0392b;
   --color-success: #27ae60;
+  
+  --font-sans: var(--font-manrope), var(--font-noto-arabic), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -22,6 +24,7 @@
   body {
     background-color: var(--color-bg);
     color: var(--color-text);
+    font-family: var(--font-sans);
   }
   h1, h2, h3, h4 {
     font-weight: 700;
