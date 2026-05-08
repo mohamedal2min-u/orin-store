@@ -9,8 +9,9 @@ export default function cloudflareLoader({
   width,
   quality,
 }: LoaderArgs): string {
-  // Pass through absolute URLs that don't belong to our CDN (e.g. local file provider)
-  if (src.startsWith("http://") || src.startsWith("//")) {
+  // In development, pass through localhost URLs from the local file provider.
+  // In production all media comes from cdn.orin.se — no raw http:// passthrough.
+  if (process.env.NODE_ENV === "development" && src.startsWith("http://")) {
     return src;
   }
 

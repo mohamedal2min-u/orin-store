@@ -8,7 +8,7 @@ import Image from "next/image";
 async function getFeaturedProducts(): Promise<MedusaProduct[]> {
   try {
     const data = await medusaFetch<ProductListResponse>(
-      "/store/products?limit=4&fields=id,title,handle,thumbnail,+variants.calculated_price"
+      "/store/products?limit=4&fields=id,title,handle,thumbnail,+variants.calculated_price&region_id=reg_01KR4NAMQR05YZNFWJFZY7BXS0"
     )
     return data.products
   } catch {
@@ -29,7 +29,7 @@ export default async function Home() {
               Upptäck Tidlös Elegans
             </h1>
             <p className="text-xl md:text-2xl text-text-muted mb-10 leading-relaxed">
-              Premiumklockor för varje tillfälle. Handplockade kollektioner med fokus على kvalitet och skandinavisk design.
+              Premiumklockor för varje tillfälle. Handplockade kollektioner med fokus på kvalitet och skandinavisk design.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/herrklockor" className="btn-primary w-full sm:w-auto min-w-[200px]">

@@ -2,6 +2,21 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
+const REQUIRED_ENV = [
+  'DATABASE_URL',
+  'JWT_SECRET',
+  'COOKIE_SECRET',
+  'STORE_CORS',
+  'ADMIN_CORS',
+  'AUTH_CORS',
+] as const
+
+for (const key of REQUIRED_ENV) {
+  if (!process.env[key]) {
+    throw new Error(`[medusa-config] Missing required environment variable: ${key}`)
+  }
+}
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
