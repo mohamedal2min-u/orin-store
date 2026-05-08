@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, "fix/**", "feat/**", "chore/**"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  storefront:
+    name: Storefront — lint / typecheck / build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: storefront
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: storefront/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Build-time env vars — storefront builds cleanly with these placeholders
+          NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_placeholder
+          NEXT_PUBLIC_CDN_URL: https://cdn.orin.se
+          NEXT_PUBLIC_USE_CF_RESIZING: "false"
+
+  backend:
+    name: Backend — typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: backend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        working-directory: backend/apps/backend
+        run: pnpm exec tsc --noEmit

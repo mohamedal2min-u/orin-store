@@ -1,6 +1,6 @@
 import { SubscriberArgs, type SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
-import { IFileModuleService } from "@medusajs/framework/types"
+import { IFileModuleService, type Logger } from "@medusajs/framework/types"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import sharp from "sharp"
 
@@ -29,6 +29,7 @@ export default async function imageVariantsHandler({
   event,
   container,
 }: SubscriberArgs<{ id: string }>) {
+  const logger = container.resolve<Logger>("logger")
   const fileService = container.resolve<IFileModuleService>(Modules.FILE)
 
   const file = await fileService.retrieveFile(event.data.id)
@@ -41,6 +42,7 @@ export default async function imageVariantsHandler({
   // Skip derived variant files — safety guard in case this event ever fires
   // for a variant through a different code path.
   if (VARIANT_KEY_PATTERN.test(storageKey)) {
+    logger.info(`[image-variants] skipping already-derived file: ${storageKey}`)
     return
   }
 
@@ -56,23 +58,34 @@ export default async function imageVariantsHandler({
   //
   // TODO: Replace with a job queue (e.g. Medusa workflow or BullMQ) if
   // bulk admin uploads cause CPU spikes. Sequential processing is fine for MVP.
-  for (const { suffix, width } of VARIANTS) {
-    const variantBuffer = await sharp(originalBuffer)
-      .resize(width, null, { withoutEnlargement: true })
-      .webp({ quality: 80 })
-      .toBuffer()
+  try {
+    for (const { suffix, width } of VARIANTS) {
+      const variantBuffer = await sharp(originalBuffer)
+        .resize(width, null, { withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toBuffer()
 
-    // "products/abc/main.webp" → "products/abc/main-thumb.webp"
-    const variantKey = storageKey.replace(/\.[^.]+$/, `${suffix}.webp`)
+      // "products/abc/main.webp" → "products/abc/main-thumb.webp"
+      const variantKey = storageKey.replace(/\.[^.]+$/, `${suffix}.webp`)
 
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: bucket,
-        Key: variantKey,
-        Body: variantBuffer,
-        ContentType: "image/webp",
-      })
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: bucket,
+          Key: variantKey,
+          Body: variantBuffer,
+          ContentType: "image/webp",
+        })
+      )
+
+      logger.info(`[image-variants] uploaded ${variantKey}`)
+    }
+  } catch (err) {
+    logger.error(
+      `[image-variants] failed to generate variants for file ${event.data.id} (key: ${storageKey})`,
+      err instanceof Error ? err : new Error(String(err))
     )
+    // Re-throw so Medusa's subscriber retry mechanism can attempt recovery.
+    throw err
   }
 }
 
