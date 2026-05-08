@@ -18,38 +18,56 @@ module.exports = defineConfig({
       resolve: '@medusajs/medusa/file',
       options: {
         providers: [
-          {
-            resolve: '@medusajs/medusa/file-s3',
-            id: 's3',
-            options: {
-              file_url: process.env.R2_PUBLIC_URL,
-              access_key_id: process.env.R2_ACCESS_KEY_ID,
-              secret_access_key: process.env.R2_SECRET_ACCESS_KEY,
-              region: 'auto',
-              bucket: process.env.R2_BUCKET,
-              endpoint: process.env.R2_ENDPOINT,
-              additional_client_config: {
-                forcePathStyle: false, // R2 requires subdomain-style
-              },
-            },
-          },
+          // Use local file provider when R2 credentials are not configured (local dev)
+          ...(process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY
+            ? [
+                {
+                  resolve: '@medusajs/medusa/file-s3',
+                  id: 's3',
+                  options: {
+                    file_url: process.env.R2_PUBLIC_URL,
+                    access_key_id: process.env.R2_ACCESS_KEY_ID,
+                    secret_access_key: process.env.R2_SECRET_ACCESS_KEY,
+                    region: 'auto',
+                    bucket: process.env.R2_BUCKET,
+                    endpoint: process.env.R2_ENDPOINT,
+                    additional_client_config: {
+                      forcePathStyle: false,
+                    },
+                  },
+                },
+              ]
+            : [
+                {
+                  resolve: '@medusajs/medusa/file-local',
+                  id: 'local',
+                  options: {
+                    upload_dir: 'uploads',
+                    backend_url: 'http://localhost:9000',
+                  },
+                },
+              ]),
         ],
       },
     },
-    {
-      resolve: '@medusajs/medusa/payment',
-      options: {
-        providers: [
+    ...(process.env.STRIPE_API_KEY
+      ? [
           {
-            resolve: '@medusajs/payment-stripe',
-            id: 'stripe',
+            resolve: '@medusajs/medusa/payment',
             options: {
-              apiKey: process.env.STRIPE_API_KEY,
-              webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+              providers: [
+                {
+                  resolve: '@medusajs/payment-stripe',
+                  id: 'stripe',
+                  options: {
+                    apiKey: process.env.STRIPE_API_KEY,
+                    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+                  },
+                },
+              ],
             },
           },
-        ],
-      },
-    },
+        ]
+      : []),
   ]
 })

@@ -1,0 +1,14 @@
+{
+  "name": "orin.se",
+  "private": true,
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=11"
+  },
+  "scripts": {
+    "backend:dev": "pnpm -C backend backend:dev",
+    "storefront:dev": "pnpm -C storefront dev",
+    "backend:build": "pnpm -C backend build",
+    "storefront:build": "pnpm -C storefront build"
+  }
+}
