@@ -1,18 +1,9 @@
 import { t } from "@/lib/translations";
 import { medusaFetch } from "@/lib/medusa";
 import { MedusaProduct, ProductListResponse } from "@/lib/types";
+import { formatPriceRaw } from "@/lib/locale";
 import Link from "next/link";
 import Image from "next/image";
-
-function formatPrice(product: MedusaProduct): string {
-  const price = product.variants[0]?.calculated_price
-  if (!price) return ""
-  return new Intl.NumberFormat("sv-SE", {
-    style: "currency",
-    currency: price.currency_code.toUpperCase(),
-    maximumFractionDigits: 0,
-  }).format(price.calculated_amount / 100)
-}
 
 async function getFeaturedProducts(): Promise<MedusaProduct[]> {
   try {
@@ -31,91 +22,120 @@ export default async function Home() {
   return (
     <div className="home-page">
       {/* Hero Banner */}
-      <section className="hero-banner">
-        <div className="container">
-          <div className="hero-content">
-            <h1>Upptäck Tidlös Elegans</h1>
-            <p>Premiumklockor för varje tillfälle</p>
-            <Link href="/herrklockor" className="btn-primary">Shoppa Nu</Link>
+      <section className="hero-banner relative overflow-hidden">
+        <div className="container relative z-10">
+          <div className="hero-content max-w-2xl mx-auto text-center">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+              Upptäck Tidlös Elegans
+            </h1>
+            <p className="text-xl md:text-2xl text-text-muted mb-10 leading-relaxed">
+              Premiumklockor för varje tillfälle. Handplockade kollektioner med fokus على kvalitet och skandinavisk design.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/herrklockor" className="btn-primary w-full sm:w-auto min-w-[200px]">
+                Herrklockor
+              </Link>
+              <Link href="/damklockor" className="btn-primary w-full sm:w-auto min-w-[200px]">
+                Damklockor
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Featured Brands */}
-      <section className="featured-brands">
+      <section className="featured-brands py-12 bg-white">
         <div className="container">
           <h2 className="sr-only">{t.brands}</h2>
-          <div className="brand-grid">
-            <div className="brand-placeholder">Märke 1</div>
-            <div className="brand-placeholder">Märke 2</div>
-            <div className="brand-placeholder">Märke 3</div>
-            <div className="brand-placeholder">Märke 4</div>
+          <div className="brand-grid grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-60">
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Seiko</div>
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Citizen</div>
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Tissot</div>
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Casio</div>
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Certina</div>
+            <div className="brand-placeholder grayscale hover:grayscale-0 transition-all">Orient</div>
           </div>
         </div>
       </section>
 
       {/* Category Cards */}
-      <section className="category-cards">
+      <section className="category-cards py-20">
         <div className="container">
-          <div className="category-grid">
-            <Link href="/herrklockor" className="category-card">
-              <h3>{t.menWatches}</h3>
+          <div className="category-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Link href="/herrklockor" className="category-card group relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
+              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.menWatches}</h3>
             </Link>
-            <Link href="/damklockor" className="category-card">
-              <h3>{t.womenWatches}</h3>
+            <Link href="/damklockor" className="category-card group relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
+              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.womenWatches}</h3>
             </Link>
-            <Link href="/nyheter" className="category-card">
-              <h3>{t.newArrivals}</h3>
+            <Link href="/nyheter" className="category-card group relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
+              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.newArrivals}</h3>
             </Link>
-            <Link href="/rea" className="category-card">
-              <h3 className="text-sale">{t.sale}</h3>
+            <Link href="/rea" className="category-card group relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
+              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase text-sale">{t.sale}</h3>
             </Link>
           </div>
         </div>
       </section>
 
       {/* Product Highlights */}
-      <section className="product-highlights">
+      <section className="product-highlights py-20 bg-bg-secondary/30">
         <div className="container">
-          <h2>{t.bestSellers}</h2>
-          <div className="product-grid">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <span className="text-accent uppercase tracking-[0.2em] text-sm font-bold mb-2 block">Utvalda</span>
+              <h2 className="text-3xl md:text-4xl font-bold">{t.bestSellers}</h2>
+            </div>
+            <Link href="/klockor" className="text-sm font-bold uppercase tracking-wider border-b-2 border-accent pb-1 hover:text-accent transition-colors">
+              Se alla klockor
+            </Link>
+          </div>
+          
+          <div className="product-grid grid grid-cols-2 lg:grid-cols-4 gap-8">
             {products.length > 0 ? (
-              products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/produkter/${product.handle}`}
-                  className="product-card"
-                >
-                  <div className="image-placeholder">
-                    {product.thumbnail ? (
-                      <Image
-                        src={product.thumbnail}
-                        alt={product.title}
-                        width={300}
-                        height={300}
-                        style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                      />
-                    ) : (
-                      <span>Bild</span>
-                    )}
-                  </div>
-                  <div className="product-info">
-                    <h3 className="title">{product.title}</h3>
-                    {formatPrice(product) && (
-                      <span className="price">{formatPrice(product)}</span>
-                    )}
-                  </div>
-                </Link>
-              ))
+              products.map((product) => {
+                const price = product.variants[0]?.calculated_price;
+                return (
+                  <Link
+                    key={product.id}
+                    href={`/produkter/${product.handle}`}
+                    className="product-card group"
+                  >
+                    <div className="image-placeholder aspect-[4/5] relative bg-white overflow-hidden rounded-none">
+                      {product.thumbnail ? (
+                        <Image
+                          src={product.thumbnail}
+                          alt={product.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <span className="text-text-muted">Ingen bild</span>
+                      )}
+                    </div>
+                    <div className="product-info pt-6">
+                      <span className="text-[10px] uppercase tracking-widest text-text-muted mb-1 block">ORIN Premium</span>
+                      <h3 className="text-base font-bold mb-1 group-hover:text-accent transition-colors">{product.title}</h3>
+                      {price && (
+                        <span className="text-sm font-semibold">{formatPriceRaw(price.calculated_amount / 100)}</span>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })
             ) : (
               /* Placeholders shown when catalog is empty */
               [1, 2, 3, 4].map((item) => (
-                <div key={item} className="product-card-placeholder">
-                  <div className="image-placeholder">Bild</div>
-                  <div className="product-info">
-                    <span className="brand">Märke</span>
-                    <h3 className="title">Klockmodell {item}</h3>
-                    <span className="price">1 499 kr</span>
+                <div key={item} className="product-card-placeholder group animate-pulse">
+                  <div className="image-placeholder aspect-[4/5] bg-gray-200" />
+                  <div className="product-info pt-6">
+                    <div className="h-2 w-16 bg-gray-200 mb-2" />
+                    <div className="h-4 w-32 bg-gray-200 mb-2" />
+                    <div className="h-4 w-20 bg-gray-200" />
                   </div>
                 </div>
               ))
@@ -125,20 +145,29 @@ export default async function Home() {
       </section>
 
       {/* Trust Section */}
-      <section className="trust-section">
+      <section className="trust-section py-20 border-y border-border bg-white">
         <div className="container">
-          <div className="trust-grid">
-            <div className="trust-item">
-              <h4>{t.freeShipping}</h4>
-              <p>På alla beställningar över 499 kr</p>
+          <div className="trust-grid grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div className="trust-item flex flex-col items-center">
+              <div className="w-12 h-12 mb-6 text-accent">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+              </div>
+              <h4 className="text-sm font-bold uppercase tracking-widest mb-3">{t.freeShipping}</h4>
+              <p className="text-sm text-text-muted leading-relaxed">Fri frakt på alla beställningar över 499 kr inom hela Sverige.</p>
             </div>
-            <div className="trust-item">
-              <h4>{t.openPurchase}</h4>
-              <p>Handla tryggt och säkert</p>
+            <div className="trust-item flex flex-col items-center">
+              <div className="w-12 h-12 mb-6 text-accent">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+              </div>
+              <h4 className="text-sm font-bold uppercase tracking-widest mb-3">{t.openPurchase}</h4>
+              <p className="text-sm text-text-muted leading-relaxed">Handla tryggt med 30 dagars öppet köp och smidiga returer.</p>
             </div>
-            <div className="trust-item">
-              <h4>Snabb Leverans</h4>
-              <p>1-3 arbetsdagar</p>
+            <div className="trust-item flex flex-col items-center">
+              <div className="w-12 h-12 mb-6 text-accent">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <h4 className="text-sm font-bold uppercase tracking-widest mb-3">Snabb Leverans</h4>
+              <p className="text-sm text-text-muted leading-relaxed">Beställ före kl. 14:00 så skickar vi din klocka samma vardag.</p>
             </div>
           </div>
         </div>
