@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+.next/
+.medusa/
+dist/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*
+!.env.template
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+pm2-*.log
+
+# Temporary
+*.tmp
+*.bak
+convert_doc.ps1
+mvp_plan.md
+mvp_plan_utf8.md
+
+# Antigravity Kit
+# NOTE: .agent/ is handled via .git/info/exclude to allow AI indexing in Cursor/Windsurf
