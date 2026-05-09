@@ -62,21 +62,33 @@ export default async function Home() {
       <section className="category-cards py-20">
         <div className="container">
           <div className="category-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/herrklockor" className="category-card group relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
-              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.menWatches}</h3>
+            <Link href="/herrklockor" className="category-card category-card--men group overflow-hidden">
+              <div className="category-card-body">
+                <h3 className="category-card-title">{t.menWatches}</h3>
+                <p className="category-card-sub">Klassiska &amp; sportiga</p>
+                <span className="category-card-cta">Utforska &rarr;</span>
+              </div>
             </Link>
-            <Link href="/damklockor" className="category-card group relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
-              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.womenWatches}</h3>
+            <Link href="/damklockor" className="category-card category-card--women group overflow-hidden">
+              <div className="category-card-body">
+                <h3 className="category-card-title">{t.womenWatches}</h3>
+                <p className="category-card-sub">Eleganta &amp; moderna</p>
+                <span className="category-card-cta">Utforska &rarr;</span>
+              </div>
             </Link>
-            <Link href="/nyheter" className="category-card group relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
-              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase">{t.newArrivals}</h3>
+            <Link href="/nyheter" className="category-card category-card--new group overflow-hidden">
+              <div className="category-card-body">
+                <h3 className="category-card-title">{t.newArrivals}</h3>
+                <p className="category-card-sub">Senaste kollektionen</p>
+                <span className="category-card-cta">Se nyheter &rarr;</span>
+              </div>
             </Link>
-            <Link href="/rea" className="category-card group relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/5 group-hover:bg-black/20 transition-colors" />
-              <h3 className="relative z-10 text-xl font-bold tracking-widest uppercase text-sale">{t.sale}</h3>
+            <Link href="/rea" className="category-card category-card--sale group overflow-hidden">
+              <div className="category-card-body">
+                <h3 className="category-card-title">{t.sale}</h3>
+                <p className="category-card-sub" style={{ color: "rgba(200,169,110,0.65)" }}>Upp till 50% rabatt</p>
+                <span className="category-card-cta">Se erbjudanden &rarr;</span>
+              </div>
             </Link>
           </div>
         </div>
