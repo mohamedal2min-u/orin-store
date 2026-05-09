@@ -9,10 +9,17 @@ export default function cloudflareLoader({
   width,
   quality,
 }: LoaderArgs): string {
+  // Mirrors normalizeImageUrl() in lib/normalize-image-url.ts — inlined here
+  // because Next.js loaderFile must be a self-contained module (no imports).
+  if (process.env.NODE_ENV === "development" && src.startsWith("/uploads/")) {
+    const base = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL ?? "http://localhost:9000";
+    src = `${base}/static/${src.slice("/uploads/".length)}`;
+  }
+
   // In development, pass through localhost URLs from the local file provider.
   // In production all media comes from cdn.orin.se — no raw http:// passthrough.
   if (process.env.NODE_ENV === "development" && src.startsWith("http://")) {
-    return src;
+    return `${src}?w=${width}&q=${quality || 75}`;
   }
 
   if (process.env.NEXT_PUBLIC_USE_CF_RESIZING === "true") {

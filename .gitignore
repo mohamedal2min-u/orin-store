@@ -34,4 +34,7 @@ mvp_plan.md
 mvp_plan_utf8.md
 
 # Antigravity Kit
-# NOTE: .agent/ is handled via .git/info/exclude to allow AI indexing in Cursor/Windsurf
+# Medusa Uploads
+backend/apps/backend/uploads/
+**/uploads/**
+

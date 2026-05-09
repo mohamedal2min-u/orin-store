@@ -34,7 +34,7 @@ jobs:
         run: pnpm lint
 
       - name: Typecheck
-        run: pnpm exec tsc --noEmit
+        run: pnpm typecheck
 
       - name: Build
         run: pnpm build
@@ -70,4 +70,8 @@ jobs:
 
       - name: Typecheck
         working-directory: backend/apps/backend
-        run: pnpm exec tsc --noEmit
+        run: pnpm typecheck
+
+      - name: Build
+        working-directory: backend/apps/backend
+        run: pnpm build

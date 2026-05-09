@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -15,10 +16,14 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.resolve(process.cwd(), ".."),
+  },
   output: "standalone",
   images: {
     loader: "custom",
     loaderFile: "./lib/cloudflare-loader.ts",
+    qualities: [75, 80, 100],
     remotePatterns: [
       { protocol: "https", hostname: "cdn.orin.se" },
       // Local file provider in dev

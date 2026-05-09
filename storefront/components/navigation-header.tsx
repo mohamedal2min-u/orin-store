@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 import { t } from "@/lib/translations";
@@ -14,8 +14,19 @@ const NAV_LINKS = [
 
 export function NavigationHeader() {
   const [isOpen, setIsOpen] = useState(false);
+  const [badgeAnimating, setBadgeAnimating] = useState(false);
   const { itemCount } = useCart();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Trigger the pop animation whenever itemCount changes, then clear it on
+  // animationend so it can fire again on the next change.
+  // setTimeout defers setState out of the effect body to satisfy react-hooks/set-state-in-effect.
+  useEffect(() => {
+    if (itemCount <= 0) return;
+    const id = setTimeout(() => setBadgeAnimating(true), 0);
+    return () => clearTimeout(id);
+  }, [itemCount]);
+  const handleBadgeAnimationEnd = useCallback(() => setBadgeAnimating(false), []);
 
   // Lock body scroll and handle keyboard when drawer is open
   useEffect(() => {
@@ -143,7 +154,8 @@ export function NavigationHeader() {
                 </svg>
                 {itemCount > 0 && (
                   <span
-                    className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-bg-dark text-[10px] font-bold text-text-inverse"
+                    className={`absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-bg-dark text-[10px] font-bold text-text-inverse${badgeAnimating ? " animate-pop" : ""}`}
+                    onAnimationEnd={handleBadgeAnimationEnd}
                     aria-hidden="true"
                   >
                     {itemCount > 9 ? "9+" : itemCount}

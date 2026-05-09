@@ -46,6 +46,12 @@ export default async function imageVariantsHandler({
     return
   }
 
+  // Skip variant generation when R2 is not configured (local dev uses local file provider).
+  if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+    logger.info(`[image-variants] R2 not configured — skipping variant generation for file ${event.data.id}`)
+    return
+  }
+
   // Fetch original binary directly from R2 via the file module (no CDN hop).
   const originalBuffer = await fileService.getAsBuffer(event.data.id)
 

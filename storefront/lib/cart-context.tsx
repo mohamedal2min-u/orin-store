@@ -16,10 +16,13 @@ const CART_ID_KEY = "orin_cart_id";
 // every render — defined at module scope).
 function subscribeToStorage(callback: () => void) {
   // The "storage" event fires when localStorage changes from another tab.
-  // For same-tab mutations (e.g. setItem in cart actions) call callback()
-  // explicitly after writing to localStorage.
+  // The "orin_cart_updated" event is dispatched manually for same-tab mutations.
   window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
+  window.addEventListener("orin_cart_updated", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("orin_cart_updated", callback);
+  };
 }
 function getCartIdSnapshot() {
   return localStorage.getItem(CART_ID_KEY);
@@ -83,9 +86,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
+  // Read cartId from localStorage at call time rather than from the stale closure
+  // so calling refreshCart() immediately after setItem (first cart creation) works.
   const refreshCart = useCallback(() => {
-    if (cartId) fetchItemCount(cartId);
-  }, [cartId, fetchItemCount]);
+    const id = localStorage.getItem(CART_ID_KEY);
+    if (id) fetchItemCount(id);
+  }, [fetchItemCount]);
 
   // Sync with Medusa whenever the cart ID changes.
   // No synchronous setState here — fetchItemCount is the only call and it

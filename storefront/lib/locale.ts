@@ -36,4 +36,13 @@ export function formatShortDate(date: Date | string): string {
   return shortDateFormatter.format(new Date(date));
 }
 
+const numberFormatter = new Intl.NumberFormat(LOCALE, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
+export function formatPriceParts(amount: number): { number: string; currency: string } {
+  return { number: numberFormatter.format(amount), currency: "kr" };
+}
+
 export { LOCALE, CURRENCY };

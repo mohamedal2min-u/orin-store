@@ -1,3 +1,4 @@
+import path from 'path'
 import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
@@ -37,7 +38,7 @@ module.exports = defineConfig({
           ...(process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY
             ? [
                 {
-                  resolve: '@medusajs/medusa/file-s3',
+                  resolve: '@medusajs/file-s3',
                   id: 's3',
                   options: {
                     file_url: process.env.R2_PUBLIC_URL,
@@ -57,8 +58,8 @@ module.exports = defineConfig({
                   resolve: '@medusajs/medusa/file-local',
                   id: 'local',
                   options: {
-                    upload_dir: 'uploads',
-                    backend_url: 'http://localhost:9000',
+                    upload_dir: 'static',
+                    backend_url: 'http://localhost:9000/static',
                   },
                 },
               ]),
